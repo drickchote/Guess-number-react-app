@@ -4,7 +4,9 @@ import Card from '../components/Card';
 import Input from '../components/Input'
 import Colors from '../constants/colors';
 import NumberContainer from '../components/NumberContainer';
-
+import BodyText from '../components/BodyText';
+import BodyTitle from '../components/BodyTitle';
+import MainButton from '../components/MainButton';
 const StartGameScreen = props =>{
 
     const [enteredValue, setEnteredValue] = useState("")
@@ -41,10 +43,12 @@ const StartGameScreen = props =>{
     if(confirmed){
         confirmedOutput = 
         <Card style={styles.sumaryContainer}>
-            <Text>Chosen Number:</Text>
+            <BodyText>Chosen Number:</BodyText>
             <NumberContainer>{selectedNumber}</NumberContainer>
             <View>
-                <Button title="Start Game!" onPress={props.onStartGame.bind(this,selectedNumber)}/>
+                <MainButton onPress={props.onStartGame.bind(this,selectedNumber)}>
+                    Start Game
+                </MainButton>
             </View>
         </Card>
     }
@@ -52,9 +56,9 @@ const StartGameScreen = props =>{
     return (
         <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
             <View style={styles.screen}>
-                <Text style={styles.title}>Start a New Game!</Text>
+                <BodyTitle style={styles.title}>Start a New Game!</BodyTitle>
                 <Card style={styles.container}>
-                    <Text>Select a Number</Text>
+                    <BodyText>Select a Number</BodyText>
                     <Input 
                         style={styles.input}  
                         blurOnSubmit={true}
@@ -90,7 +94,8 @@ const styles = StyleSheet.create({
     },
     title:{
         fontSize: 20,
-        marginVertical: 10
+        marginVertical: 10,
+        fontFamily: 'open-sans-bold'
     },
     container:{
         width: "80%",
