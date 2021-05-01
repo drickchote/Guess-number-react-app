@@ -1,10 +1,22 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, Text, StyleSheet, Button, Alert} from 'react-native';
+import {View, Text, StyleSheet, Button, Alert, ScrollView} from 'react-native';
 import NumberContainer from '../components/NumberContainer';
 import Card from '../components/Card';
 import MainButton from '../components/MainButton'
 import BodyText from '../components/BodyText';
 import {Ionicons} from "@expo/vector-icons"
+
+
+
+const renderList = (guess,numberOfRounds) => {
+    return (
+        <View key={numberOfRounds} style={styles.listItem}>
+            <BodyText>#{numberOfRounds}</BodyText>
+            <BodyText >{guess}</BodyText>
+        </View>
+    )
+} 
+
 
 const generateRandomBetween = (min,max,exclude) => {
     min = Math.ceil(min);
@@ -19,8 +31,11 @@ const generateRandomBetween = (min,max,exclude) => {
 }
 
 const GameScreen = props =>{
-    const [currentGuess, setCurrentGuess] = useState(generateRandomBetween(1,100,props.userChoice));
+    const initialGuess = generateRandomBetween(1,100,props.userChoice);
+    const [currentGuess, setCurrentGuess] = useState(initialGuess);
+    const [pastGuesses, setPastGuesses] = useState([initialGuess])
     const [rounds, setRounds] = useState(0)
+
     const currentLow = useRef(1)
     const currentHigh = useRef(100)
 
@@ -45,10 +60,12 @@ const GameScreen = props =>{
         if(direction === 'lower'){
             currentHigh.current = currentGuess;
         } else {
-            currentLow.current = currentGuess;
+            currentLow.current = currentGuess+1;
         }
-        setCurrentGuess(generateRandomBetween(currentLow.current, currentHigh.current , currentGuess))
+        const roundGuess = generateRandomBetween(currentLow.current, currentHigh.current , currentGuess)
+        setCurrentGuess(roundGuess)
         setRounds(rounds+1)
+        setPastGuesses(currentGuesses => [roundGuess, ...currentGuesses])
     }
 
     return (
@@ -63,6 +80,11 @@ const GameScreen = props =>{
                     <Ionicons name="md-add" size={24} color="white"/>
                 </MainButton>
             </Card>
+            <View style={styles.listContainer}>
+                <ScrollView>
+                    {pastGuesses.map((pastGuess, index)=> renderList(pastGuess, pastGuesses.length-index))}
+                </ScrollView>
+            </View>
         </View>
     )
 };
@@ -71,7 +93,6 @@ const styles = StyleSheet.create({
     screen:{
         flex:1,
         padding: 10,
-        justifyContent:"center",
         alignItems: "center",
     },
     buttonContainer:{
@@ -80,6 +101,19 @@ const styles = StyleSheet.create({
         marginTop: 20,
         width: 300,
         maxWidth: "80%",
+    },
+    listContainer:{
+        flex: 1,
+        width: "80%",
+    },
+    listItem:{
+        flexDirection:"row",
+        justifyContent:"space-between",
+        borderColor: '#ccc',
+        marginVertical: 5,
+        borderWidth: 1,
+        padding: 15,
+        backgroundColor: "white"
     }
 });
 
